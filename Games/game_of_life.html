@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conway's Game of Life</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+        }
+        #grid {
+            display: inline-grid;
+            gap: 1px;
+            background-color: #333;
+            border: 1px solid #666;
+            margin-bottom: 10px;
+        }
+        .cell {
+            width: 20px;
+            height: 20px;
+            background-color: black;
+            transition: all 0.3s ease;
+        }
+        .cell.alive {
+            background-color: #39FF14;
+            box-shadow: 0 0 5px #39FF14, 0 0 10px #39FF14;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="grid"></div>
+        <div>
+            <button id="startStop">Start</button>
+            <button id="clear">Clear</button>
+            <button id="random">Random</button>
+        </div>
+    </div>
+    <script>
+        const numRows = 25;
+        const numCols = 25;
+        let grid = [];
+        let isRunning = false;
+        let intervalId = null;
+
+        const gridElement = document.getElementById('grid');
+        const startStopButton = document.getElementById('startStop');
+        const clearButton = document.getElementById('clear');
+        const randomButton = document.getElementById('random');
+
+        function createGrid() {
+            gridElement.style.gridTemplateColumns = `repeat(${numCols}, 20px)`;
+            for (let i = 0; i < numRows; i++) {
+                grid[i] = [];
+                for (let j = 0; j < numCols; j++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.addEventListener('click', () => toggleCell(i, j));
+                    gridElement.appendChild(cell);
+                    grid[i][j] = 0;
+                }
+            }
+        }
+
+        function toggleCell(i, j) {
+            grid[i][j] = 1 - grid[i][j];
+            updateGrid();
+        }
+
+        function updateGrid() {
+            const cells = gridElement.getElementsByClassName('cell');
+            for (let i = 0; i < numRows; i++) {
+                for (let j = 0; j < numCols; j++) {
+                    cells[i * numCols + j].classList.toggle('alive', grid[i][j] === 1);
+                }
+            }
+        }
+
+        function clearGrid() {
+            grid = grid.map(row => row.map(() => 0));
+            updateGrid();
+        }
+
+        function randomizeGrid() {
+            grid = grid.map(row => row.map(() => Math.random() > 0.7 ? 1 : 0));
+            updateGrid();
+        }
+
+        function runSimulation() {
+            const newGrid = grid.map(arr => [...arr]);
+
+            for (let i = 0; i < numRows; i++) {
+                for (let j = 0; j < numCols; j++) {
+                    let neighbors = 0;
+                    for (let x = -1; x <= 1; x++) {
+                        for (let y = -1; y <= 1; y++) {
+                            if (x === 0 && y === 0) continue;
+                            const newI = i + x;
+                            const newJ = j + y;
+                            if (newI >= 0 && newI < numRows && newJ >= 0 && newJ < numCols) {
+                                neighbors += grid[newI][newJ];
+                            }
+                        }
+                    }
+
+                    if (neighbors < 2 || neighbors > 3) {
+                        newGrid[i][j] = 0;
+                    } else if (grid[i][j] === 0 && neighbors === 3) {
+                        newGrid[i][j] = 1;
+                    }
+                }
+            }
+
+            grid = newGrid;
+            updateGrid();
+        }
+
+        function startStop() {
+            isRunning = !isRunning;
+            if (isRunning) {
+                startStopButton.textContent = 'Stop';
+                intervalId = setInterval(runSimulation, 100);
+            } else {
+                startStopButton.textContent = 'Start';
+                clearInterval(intervalId);
+            }
+        }
+
+        createGrid();
+
+        startStopButton.addEventListener('click', startStop);
+        clearButton.addEventListener('click', clearGrid);
+        randomButton.addEventListener('click', randomizeGrid);
+    </script>
+</body>
+</html>

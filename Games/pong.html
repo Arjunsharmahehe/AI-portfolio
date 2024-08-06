@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong?</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            font-family: 'Courier New', Courier, monospace;
+            color: #0f0;
+        }
+        #gameCanvas {
+            border: 4px solid #0f0;
+            box-shadow: 0 0 20px #0f0;
+        }
+        #score {
+            position: absolute;
+            top: 20px;
+            color: #0f0;
+            font-size: 24px;
+            text-shadow: 0 0 10px #0f0;
+        }
+        #speedControl {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+        }
+        #speedSlider {
+            -webkit-appearance: none;
+            width: 200px;
+            height: 15px;
+            border-radius: 5px;
+            background: #0f0;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+        #speedSlider:hover {
+            opacity: 1;
+        }
+        #speedSlider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #000;
+            cursor: pointer;
+        }
+        #speedSlider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #000;
+            cursor: pointer;
+        }
+        #speedValue {
+            margin-left: 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div id="score">0 : 0</div>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <div id="speedControl">
+        <input type="range" id="speedSlider" min="1" max="10" value="4" step="0.5">
+        <span id="speedValue">4</span>
+    </div>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+
+        // Game objects
+        const ball = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            radius: 10,
+            speed: 4,
+            dx: 4,
+            dy: 4
+        };
+
+        const paddleHeight = 100;
+        const paddleWidth = 10;
+
+        const leftPaddle = {
+            x: 10,
+            y: canvas.height / 2 - paddleHeight / 2,
+            width: paddleWidth,
+            height: paddleHeight,
+            dy: 4
+        };
+
+        const rightPaddle = {
+            x: canvas.width - paddleWidth - 10,
+            y: canvas.height / 2 - paddleHeight / 2,
+            width: paddleWidth,
+            height: paddleHeight,
+            dy: 4
+        };
+
+        // Blocks
+        const blockWidth = 30;
+        const blockHeight = 15;
+        const blocks = [];
+        const numBlocks = 10;
+        const blockGap = (canvas.width - numBlocks * blockWidth) / (numBlocks + 1);
+
+        for (let i = 0; i < numBlocks; i++) {
+            blocks.push({
+                x: (i + 1) * blockGap + i * blockWidth,
+                y: canvas.height / 2 - blockHeight / 2,
+                width: blockWidth,
+                height: blockHeight,
+                visible: true
+            });
+        }
+
+        let leftScore = 0;
+        let rightScore = 0;
+
+        // Key states
+        const keys = {
+            w: false,
+            s: false,
+            ArrowUp: false,
+            ArrowDown: false
+        };
+
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            if (e.key in keys) {
+                keys[e.key] = true;
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key in keys) {
+                keys[e.key] = false;
+            }
+        });
+
+        speedSlider.addEventListener('input', (e) => {
+            const speed = parseFloat(e.target.value);
+            ball.speed = speed;
+            ball.dx = speed * Math.sign(ball.dx);
+            ball.dy = speed * Math.sign(ball.dy);
+            speedValue.textContent = speed.toFixed(1);
+        });
+
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = '#0f0';
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawPaddle(paddle) {
+            ctx.fillStyle = '#0f0';
+            ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+        }
+
+        function drawBlocks() {
+            blocks.forEach(block => {
+                if (block.visible) {
+                    ctx.fillStyle = '#0f0';
+                    ctx.fillRect(block.x, block.y, block.width, block.height);
+                }
+            });
+        }
+
+        function movePaddles() {
+            if (keys.w && leftPaddle.y > 0) {
+                leftPaddle.y -= leftPaddle.dy;
+            }
+            if (keys.s && leftPaddle.y < canvas.height - leftPaddle.height) {
+                leftPaddle.y += leftPaddle.dy;
+            }
+            if (keys.ArrowUp && rightPaddle.y > 0) {
+                rightPaddle.y -= rightPaddle.dy;
+            }
+            if (keys.ArrowDown && rightPaddle.y < canvas.height - rightPaddle.height) {
+                rightPaddle.y += rightPaddle.dy;
+            }
+        }
+
+        function moveBall() {
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+
+            // Top and bottom collision
+            if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
+                ball.dy = -ball.dy;
+            }
+
+            // Paddle collision
+            if (
+                (ball.x - ball.radius < leftPaddle.x + leftPaddle.width && ball.y > leftPaddle.y && ball.y < leftPaddle.y + leftPaddle.height) ||
+                (ball.x + ball.radius > rightPaddle.x && ball.y > rightPaddle.y && ball.y < rightPaddle.y + rightPaddle.height)
+            ) {
+                ball.dx = -ball.dx;
+            }
+
+            // Block collision
+            blocks.forEach(block => {
+                if (block.visible && 
+                    ball.x + ball.radius > block.x && 
+                    ball.x - ball.radius < block.x + block.width && 
+                    ball.y + ball.radius > block.y && 
+                    ball.y - ball.radius < block.y + block.height) {
+                    ball.dx = -ball.dx;
+                    block.visible = false;
+                }
+            });
+
+            // Score
+            if (ball.x + ball.radius > canvas.width) {
+                leftScore++;
+                resetBall();
+            } else if (ball.x - ball.radius < 0) {
+                rightScore++;
+                resetBall();
+            }
+
+            updateScore();
+        }
+
+        function resetBall() {
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+            ball.dx = ball.speed * Math.sign(ball.dx);
+            ball.dy = ball.speed * Math.sign(ball.dy);
+
+            // Reset blocks
+            blocks.forEach(block => block.visible = true);
+        }
+
+        function updateScore() {
+            scoreElement.textContent = `${leftScore} : ${rightScore}`;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawBall();
+            drawPaddle(leftPaddle);
+            drawPaddle(rightPaddle);
+            drawBlocks();
+
+            movePaddles();
+            moveBall();
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>

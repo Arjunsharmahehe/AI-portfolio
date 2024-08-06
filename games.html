@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <title>My Game Showcase</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+            --card-background: #ffffff;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: var(--secondary-color);
+            padding: 15px 0;
+            z-index: 1000;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 20px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        nav ul li a:hover {
+            color: var(--primary-color);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container h1{
+            margin-top: 70px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: var(--secondary-color);
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .game-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .game-card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .game-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .game-info {
+            padding: 20px;
+        }
+
+        .game-title {
+            font-size: 1.5em;
+            margin-top: 0;
+        }
+
+        .game-description {
+            margin-bottom: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-play {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-play:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-github {
+            background-color: #333;
+            color: white;
+        }
+
+        .btn-github:hover {
+            background-color: #555;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .game-card {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--secondary-color);
+            padding: 20px;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+          }
+
+          .social-links {
+
+            margin-bottom: 10px;
+          }
+
+          .social-links a, .email a {
+            color: var(--background-color);
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+          }
+
+          .social-links a:hover, .email a:hover {
+            color: var(--primary-color);
+          }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html#introduction">Home</a></li>
+            <!-- <li><a href="index.html#about">About</a></li> -->
+            <li><a href="index.html#experience">Experience</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="games.html">Games</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <header>
+            <h1>My Game Showcase</h1>
+        </header>
+        <main class="game-grid" id="gameGrid">
+            <!-- Game cards will be dynamically inserted here -->
+        </main>
+    </div>
+    <!-- Footer -->
+    <footer>
+        <div class="social-links">
+            <a href="https://www.instagram.com/arjunsharmahehe" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/arjunsharmahehe" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="https://github.com/arjunsharmahehe" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-github"></i>
+            </a>
+        </div>
+      <div class="email">
+        <a href="mailto:arjunsharma.theta@gmail.com">arjunsharma.theta@gmail.com</a>
+      </div>
+    </footer>
+
+    <script>
+        const games = [
+            {
+                title: "Hangman",
+                description: "Classic word-guessing game with a twist.",
+                image: "Images/hangman.png",
+                playLink: "Games/hangman.html",
+                githubLink: "https://github.com/yourusername/hangman"
+            },
+            {
+                title: "Game of Life",
+                description: "Conway's Game of Life simulation.",
+                image: "Images/game_of_life.jpg",
+                playLink: "Games/game_of_life.html",
+                githubLink: "https://github.com/yourusername/game-of-life"
+            },
+            {
+                title: "Snake",
+                description: "Classic snake game with modern graphics.",
+                image: "Images/snake.png",
+                playLink: "Games/snake.html",
+                githubLink: "https://github.com/yourusername/snake"
+            },
+            {
+                title: "Tetris",
+                description: "Timeless puzzle game with a twist.",
+                image: "Images/tetris.png",
+                playLink: "Games/tetris.html",
+                githubLink: "https://github.com/yourusername/tetris"
+            },
+            {
+                title: "Pong",
+                description: "Old ball game, with a twist",
+                image: "Images/pong.png",
+                playLink: "Games/pong.html",
+                githubLink: "https://github.com/yourusername/tetris"
+            },
+            {
+                title: "Look it up",
+                description: "How good of a memory do you have?",
+                image: "Images/memory_game.png",
+                playLink: "Games/memory_card_game.html",
+                githubLink: "https://github.com/yourusername/tetris"
+            },
+            {
+                title: "Tic-tac-toe",
+                description: "You know what it is",
+                image: "Images/tic_tac_toe.png",
+                playLink: "Games/tic_tac_toe.html",
+                githubLink: "https://github.com/yourusername/tetris"
+            },
+            {
+                title: "Mines",
+                description: "Minesweeper, but you can't flag em",
+                image: "Images/mines.png",
+                playLink: "Games/minesweeper.html",
+                githubLink: "https://github.com/yourusername/tetris"
+            },
+            {
+                title: "Flappy block",
+                description: "Help the block through the pipes",
+                image: "Images/flappy_block.png",
+                playLink: "Games/flappy_bird.html",
+                githubLink: "https://github.com/yourusername/tetris"
+            }
+            // Add more games here
+        ];
+
+        function createGameCard(game) {
+            const card = document.createElement('div');
+            card.className = 'game-card';
+            card.innerHTML = `
+                <img src="${game.image}" alt="${game.title}" class="game-image">
+                <div class="game-info">
+                    <h2 class="game-title">${game.title}</h2>
+                    <p class="game-description">${game.description}</p>
+                    <div class="button-container">
+                        <button class="btn btn-play" onclick="window.location.href='${game.playLink}'">Play Game</button>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        function populateGameGrid() {
+            const gameGrid = document.getElementById('gameGrid');
+            games.forEach((game, index) => {
+                const card = createGameCard(game);
+                card.style.animationDelay = `${index * 0.1}s`;
+                gameGrid.appendChild(card);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', populateGameGrid);
+    </script>
+</body>
+</html>

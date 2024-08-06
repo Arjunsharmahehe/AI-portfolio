@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000;
+            color: #0f0;
+        }
+        .container {
+            text-align: center;
+            background-color: #111;
+            border: 4px solid #0f0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #0f0;
+        }
+        h1 {
+            color: #0f0;
+            text-shadow: 2px 2px #00f;
+            margin-bottom: 20px;
+        }
+        #word-display {
+            font-size: 1.5em;
+            margin: 20px 0;
+            letter-spacing: 5px;
+        }
+        #hangman {
+            font-family: monospace;
+            white-space: pre;
+            font-size: 0.8em;
+            margin: 20px 0;
+            color: #f00;
+        }
+        #alphabet {
+            margin: 20px 0;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            font-size: 12px;
+            cursor: pointer;
+            background-color: #000;
+            color: #0f0;
+            border: 2px solid #0f0;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-family: 'Press Start 2P', cursive;
+        }
+        button:hover {
+            background-color: #0f0;
+            color: #000;
+        }
+        button:disabled {
+            background-color: #333;
+            border-color: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+        #message {
+            font-size: 1em;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #ff0;
+        }
+        #new-game {
+            background-color: #00f;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+        #new-game:hover {
+            background-color: #00a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HANGMAN</h1>
+        <div id="hangman"></div>
+        <div id="word-display"></div>
+        <div id="alphabet"></div>
+        <div id="message"></div>
+        <button id="new-game">NEW GAME</button>
+    </div>
+    <script>
+        const words = ['JAVASCRIPT', 'HANGMAN', 'COMPUTER', 'PROGRAMMING', 'DEVELOPER', 'CODING', 'CHALLENGE', 'SYSTEM', 'ALOGRITHM', 'YOURMOM', 'NOTLIKEUS', 'KENDRICK', 'KANYE', 'KANYEEAST', 'BATMAN', 'SUPERMAN', 'HOMELANDER', 'STARLIGHT', 'PUTIN', 'TRUMP', 'VOUGHT', 'DEEP', 'STARBOY'];
+        let word = '';
+        let guessedWord = [];
+        let wrongGuesses = 0;
+        const maxWrongGuesses = 6;
+
+        const hangmanStages = [
+            `
+  +---+
+  |   |
+      |
+      |
+      |
+      |
+=========`,
+            `
+  +---+
+  |   |
+  O   |
+      |
+      |
+      |
+=========`,
+            `
+  +---+
+  |   |
+  O   |
+  |   |
+      |
+      |
+=========`,
+            `
+  +---+
+  |   |
+  O   |
+ /|   |
+      |
+      |
+=========`,
+            `
+  +---+
+  |   |
+  O   |
+ /|\\  |
+      |
+      |
+=========`,
+            `
+  +---+
+  |   |
+  O   |
+ /|\\  |
+ /    |
+      |
+=========`,
+            `
+  +---+
+  |   |
+  O   |
+ /|\\  |
+ / \\  |
+      |
+=========`
+        ];
+
+        const wordDisplay = document.getElementById('word-display');
+        const hangmanDisplay = document.getElementById('hangman');
+        const alphabetDisplay = document.getElementById('alphabet');
+        const messageDisplay = document.getElementById('message');
+        const newGameButton = document.getElementById('new-game');
+
+        function initGame() {
+            word = words[Math.floor(Math.random() * words.length)];
+            guessedWord = Array(word.length).fill('_');
+            wrongGuesses = 0;
+            updateDisplay();
+            createAlphabet();
+            messageDisplay.textContent = '';
+        }
+
+        function updateDisplay() {
+            wordDisplay.textContent = guessedWord.join(' ');
+            hangmanDisplay.textContent = hangmanStages[wrongGuesses];
+        }
+
+        function createAlphabet() {
+            alphabetDisplay.innerHTML = '';
+            for (let i = 65; i <= 90; i++) {
+                const letter = String.fromCharCode(i);
+                const button = document.createElement('button');
+                button.textContent = letter;
+                button.addEventListener('click', () => guessLetter(letter));
+                alphabetDisplay.appendChild(button);
+            }
+        }
+
+        function guessLetter(letter) {
+            if (word.includes(letter)) {
+                for (let i = 0; i < word.length; i++) {
+                    if (word[i] === letter) {
+                        guessedWord[i] = letter;
+                    }
+                }
+            } else {
+                wrongGuesses++;
+            }
+            updateDisplay();
+            checkGameStatus();
+            disableButton(letter);
+        }
+
+        function checkGameStatus() {
+            if (guessedWord.join('') === word) {
+                messageDisplay.textContent = 'Congratulations! You won!';
+                disableAllButtons();
+            } else if (wrongGuesses === maxWrongGuesses) {
+                messageDisplay.textContent = `Game Over! The word was "${word}".`;
+                disableAllButtons();
+            }
+        }
+
+        function disableButton(letter) {
+            const buttons = alphabetDisplay.getElementsByTagName('button');
+            for (let button of buttons) {
+                if (button.textContent === letter) {
+                    button.disabled = true;
+                    break;
+                }
+            }
+        }
+
+        function disableAllButtons() {
+            const buttons = alphabetDisplay.getElementsByTagName('button');
+            for (let button of buttons) {
+                button.disabled = true;
+            }
+        }
+
+        newGameButton.addEventListener('click', initGame);
+
+        initGame();
+    </script>
+</body>
+</html>
