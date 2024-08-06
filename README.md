@@ -23,3 +23,8 @@ Some key highlights are:
 - Mildly responsive
 - Minimal but nice footer
 - Consistent design
+
+
+### Link
+
+Link to the site is here [https://arjunsharmahehe.github.io/AI-portfolio/]
