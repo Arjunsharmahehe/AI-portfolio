@@ -9,9 +9,9 @@ We shouldn't shy off from using whatever tools we have to showcase our product t
 
 ## Understanding the codebase
 
--The codebase mainly consists of 3 main HTML files. 
--Then there are two folders, one for the images used and one for the games.
--There is no seperate CSS or JS file as the LLM used outputs code written in a single HTML life. I could have changed that but that felt against the spirit of the project.
+- The codebase mainly consists of 3 main HTML files.   
+- Then there are two folders, one for the images used and one for the games.   
+- There is no seperate CSS or JS file as the LLM used outputs code written in a single HTML life. I could have changed that but that felt against the spirit of the project.   
 
 ### Key features
 
